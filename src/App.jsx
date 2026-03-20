@@ -33,6 +33,12 @@ export default function App() {
   const [currentView, setCurrentView] = useState('main-dash');
   const [prods, setProds] = useState(INITIAL_PRODS);
   const [pos, setPos] = useState(INITIAL_POS);
+  const [warehouseStock, setWarehouseStock] = useState([
+    { id: 'C1', short: 'VCB', name: 'Vacuum Circuit Breakers (11kV)', code: 'COMP-VCB-11K', cat: 'HT', loc: 'A-11', inStock: 14, reorder: 5, status: 'Healthy', statusClass: 'bg', colorC: 'bfg', percent: 70 },
+    { id: 'C2', short: 'ACB', name: 'Air Circuit Breakers (1600A)', code: 'COMP-ACB-1600', cat: 'LT', loc: 'B-04', inStock: 7, reorder: 10, status: 'Low Stock', statusClass: 'ba', colorC: 'bfa', percent: 35 },
+    { id: 'C3', short: 'INS', name: 'VCB Insulator Bushings', code: 'COMP-INS-VCB', cat: 'HT', loc: 'A-12', inStock: 12, reorder: 40, status: 'Critical', statusClass: 'br', colorC: 'bfr', percent: 12 },
+    { id: 'C4', short: 'BUS', name: 'Copper Busbar (100×10mm)', code: 'COMP-BUS-100', cat: 'LT', loc: 'C-02', inStock: 420, reorder: 100, status: 'Healthy', statusClass: 'bg', colorC: 'bfg', percent: 80, unit: 'm' }
+  ]);
   const [assigns, setAssigns] = useState(ASSIGNS);
   const [projects, setProjects] = useState(PROJECTS);
   const [searchQuery, setSearchQuery] = useState('');
@@ -246,8 +252,8 @@ export default function App() {
             {currentView === 'products' && <Products prods={prods} setProds={setProds} searchQuery={searchQuery} />}
             {currentView === 'orders' && <Orders pos={pos} setPos={setPos} searchQuery={searchQuery} />}
             {currentView === 'suppliers' && <Suppliers searchQuery={searchQuery} pos={pos} />}
-            {currentView === 'warehouse' && <Warehouse searchQuery={searchQuery} pos={pos} setPos={setPos} />}
-            {currentView === 'manufacturing' && <Manufacturing searchQuery={searchQuery} />}
+            {currentView === 'warehouse' && <Warehouse searchQuery={searchQuery} pos={pos} setPos={setPos} warehouseStock={warehouseStock} setWarehouseStock={setWarehouseStock} />}
+            {currentView === 'manufacturing' && <Manufacturing searchQuery={searchQuery} warehouseStock={warehouseStock} setWarehouseStock={setWarehouseStock} />}
             {currentView === 'services' && <Services searchQuery={searchQuery} />}
             {currentView === 'invoices' && <Invoices searchQuery={searchQuery} />}
             {currentView === 'performa' && <Performa />}

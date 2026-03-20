@@ -1,21 +1,13 @@
 import React, { useState } from 'react';
 
-export default function Warehouse({ searchQuery = '', pos, setPos }) {
-  const [components, setComponents] = useState([
-    { id: 'C1', short: 'VCB', name: 'Vacuum Circuit Breakers (11kV)', code: 'COMP-VCB-11K', cat: 'HT', loc: 'A-11', inStock: 14, reorder: 5, status: 'Healthy', statusClass: 'bg', colorC: 'bfg', percent: 70 },
-    { id: 'C2', short: 'ACB', name: 'Air Circuit Breakers (1600A)', code: 'COMP-ACB-1600', cat: 'LT', loc: 'B-04', inStock: 7, reorder: 10, status: 'Low Stock', statusClass: 'ba', colorC: 'bfa', percent: 35 },
-    { id: 'C3', short: 'INS', name: 'VCB Insulator Bushings', code: 'COMP-INS-VCB', cat: 'HT', loc: 'A-12', inStock: 12, reorder: 40, status: 'Critical', statusClass: 'br', colorC: 'bfr', percent: 12 },
-    { id: 'C4', short: 'BUS', name: 'Copper Busbar (100×10mm)', code: 'COMP-BUS-100', cat: 'LT', loc: 'C-02', inStock: 420, reorder: 100, status: 'Healthy', statusClass: 'bg', colorC: 'bfg', percent: 80, unit: 'm' }
-  ]);
-
+export default function Warehouse({ searchQuery = '', pos, setPos, warehouseStock, setWarehouseStock }) {
   const [orderModal, setOrderModal] = useState(false);
   const [orderItem, setOrderItem] = useState(null);
   const [orderForm, setOrderForm] = useState({ qty: 0, date: '' });
 
-  // Derive counts
-  const lowStockCount = components.filter(c => c.inStock <= c.reorder).length;
+  const lowStockCount = warehouseStock.filter(c => c.inStock <= c.reorder).length;
 
-  let filtered = components;
+  let filtered = warehouseStock;
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     filtered = filtered.filter(c => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || c.short.toLowerCase().includes(q));
@@ -59,7 +51,7 @@ export default function Warehouse({ searchQuery = '', pos, setPos }) {
         </div>
       </div>
       <div className="sg sg3">
-        <div className="sc"><div className="sct"><div className="scl">Component SKUs</div></div><div className="scv">{components.length}</div><div className="scf">across categories</div></div>
+        <div className="sc"><div className="sct"><div className="scl">Component SKUs</div></div><div className="scv">{warehouseStock.length}</div><div className="scf">across categories</div></div>
         <div className="sc"><div className="sct"><div className="scl">Low Stock Items</div></div><div className="scv" style={{ color: '#a8510a' }}>{lowStockCount}</div><div className="scf">below reorder</div></div>
         <div className="sc"><div className="sct"><div className="scl">Pending POs</div></div><div className="scv" style={{ color: '#b01f1f' }}>5</div><div className="scf">awaiting delivery</div></div>
       </div>
