@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { INITIAL_WORK_LOGS, ALL_SERVICES, today, todayStr, dF, fmt } from './data';
 import CheckIn from './CheckIn';
 import CameraScanner from './CameraScanner';
-import Sidebar from './Sidebar';
 
 export default function EmpDashboard({ currentUser, assigns }) {
   const [chartView, setChartView] = useState('hours');
   const [checkInModal, setCheckInModal] = useState(false);
   const [cameraModal, setCameraModal] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [todayWorkLog, setTodayWorkLog] = useState(null);
   const [scannedQR, setScannedQR] = useState(null);
 
@@ -48,11 +46,9 @@ export default function EmpDashboard({ currentUser, assigns }) {
 
   return (
     <>
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} currentUser={currentUser} />
       <div className="view pg on" style={{ animation: 'fin .2s ease' }}>
         <div className="pgh">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button className="btn-sidebar" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
             <div>
               <div className="pgt">{greet}, {currentUser.name.split(' ')[0]}! 👋</div>
               <div className="pgs">

@@ -35,6 +35,7 @@ export default function App() {
   const [assigns, setAssigns] = useState(ASSIGNS);
   const [projects, setProjects] = useState(PROJECTS);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!currentUser) {
     return (
@@ -101,7 +102,8 @@ export default function App() {
   return (
     <div id="app" className="lay">
       {/* SIDEBAR */}
-      <aside className="sb">
+      {sidebarOpen && <div className="sb-overlay" onClick={() => setSidebarOpen(false)}></div>}
+      <aside className={`sb ${sidebarOpen ? 'open' : ''}`} onClick={(e) => { if(e.target.closest('.ni') || e.target.closest('.logout-btn')) setSidebarOpen(false); }}>
         <div className="sb-head">
           <div className="lb">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -113,6 +115,7 @@ export default function App() {
             <div className="ln">PowerGrid ERP</div>
             <div className="lv">PANEL MANUFACTURING</div>
           </div>
+          <button className="sidebar-close sb-close-mobile" onClick={() => setSidebarOpen(false)}>✕</button>
         </div>
 
         {isAdmin ? (
@@ -205,6 +208,7 @@ export default function App() {
       {/* MAIN TOPBAR */}
       <div className="main">
         <div className="tb">
+          <button className="btn-sidebar mobile-only" onClick={() => setSidebarOpen(true)}>☰</button>
           <div className="tb-t" id="tbt">
             {formatTitle(currentView)}
           </div>
