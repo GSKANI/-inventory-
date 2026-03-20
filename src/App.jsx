@@ -245,8 +245,8 @@ export default function App() {
             {currentView === 'payroll' && <Payroll searchQuery={searchQuery} />}
             {currentView === 'products' && <Products prods={prods} setProds={setProds} searchQuery={searchQuery} />}
             {currentView === 'orders' && <Orders pos={pos} setPos={setPos} searchQuery={searchQuery} />}
-            {currentView === 'suppliers' && <Suppliers searchQuery={searchQuery} />}
-            {currentView === 'warehouse' && <Warehouse searchQuery={searchQuery} />}
+            {currentView === 'suppliers' && <Suppliers searchQuery={searchQuery} pos={pos} />}
+            {currentView === 'warehouse' && <Warehouse searchQuery={searchQuery} pos={pos} setPos={setPos} />}
             {currentView === 'manufacturing' && <Manufacturing searchQuery={searchQuery} />}
             {currentView === 'services' && <Services searchQuery={searchQuery} />}
             {currentView === 'invoices' && <Invoices searchQuery={searchQuery} />}

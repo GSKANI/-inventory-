@@ -153,8 +153,8 @@ export const INITIAL_PRODS = [
 ];
 
 export const INITIAL_POS = [
-  { id: 'PO-0112', comp: 'VCB Insulator Bushings', qty: '60 pcs', qtyNum: 60, supplier: 'Crompton Greaves', rate: 800, date: '2026-03-22', status: 'Pending' },
-  { id: 'PO-0111', comp: 'ACB 1600A (3P)', qty: '10 nos', qtyNum: 10, supplier: 'Schneider Electric', rate: 32000, date: '2026-03-25', status: 'Pending' },
+  { id: 'PO-0112', comp: 'VCB Insulator Bushings', qty: '60 pcs', qtyNum: 60, supplier: 'Crompton Greaves', rate: 800, appliedDate: '2026-03-15', date: '2026-03-22', status: 'Pending' },
+  { id: 'PO-0111', comp: 'ACB 1600A (3P)', qty: '10 nos', qtyNum: 10, supplier: 'Schneider Electric', rate: 32000, appliedDate: '2026-03-16', date: '2026-03-25', status: 'Pending' },
 ];
 
 export const INVOICES = [

@@ -7,7 +7,7 @@ export default function Orders({ pos, setPos, searchQuery = '' }) {
   const [editingItem, setEditingItem] = useState(null);
 
   const initialForm = {
-    id: `PO-${Date.now().toString().slice(-4)}`, comp: '', qty: '', qtyNum: 0, supplier: '', rate: 0, date: new Date().toISOString().split('T')[0], status: 'Pending'
+    id: `PO-${Date.now().toString().slice(-4)}`, comp: '', qty: '', qtyNum: 0, supplier: '', rate: 0, date: new Date().toISOString().split('T')[0], appliedDate: new Date().toISOString().split('T')[0], status: 'Pending'
   };
   const [formData, setFormData] = useState(initialForm);
 

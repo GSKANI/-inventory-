@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Suppliers({ searchQuery = '' }) {
+export default function Suppliers({ searchQuery = '', pos = [] }) {
   const [suppliers, setSuppliers] = useState([
     { id: 'SUP-001', name: 'Crompton Greaves', catFrom: 'HT Connectors', catTo: 'High Voltage Division', email: 'sales@crompton.in', mobile: '9840012345', status: 'Active' },
     { id: 'SUP-002', name: 'Schneider Electric', catFrom: 'LT Switchgear', catTo: 'Low Voltage Division', email: 'orders@schneider.in', mobile: '9840054321', status: 'Active' },
@@ -72,27 +72,43 @@ export default function Suppliers({ searchQuery = '' }) {
         <table>
           <thead>
             <tr>
-              <th>ID</th>
               <th>Supplier Name</th>
-              <th>From Category</th>
-              <th>To Category</th>
-              <th>Contact Info</th>
-              <th>Status</th>
+              <th>Categories (From→To)</th>
+              <th>Ordered Qty</th>
+              <th>Applied Date</th>
+              <th>Receiving Date</th>
+              <th>Tracking Status</th>
               <th className="tc">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {displayData.map(s => (
+            {displayData.map(s => {
+              const suppPOs = pos.filter(p => p.supplier.toLowerCase().includes(s.name.toLowerCase()));
+              const totalQty = suppPOs.reduce((sum, p) => sum + p.qtyNum, 0);
+              const activePO = suppPOs.find(p => p.status === 'Pending') || suppPOs[0];
+              
+              const appliedDate = activePO ? activePO.appliedDate || '—' : '—';
+              const receivingDate = activePO ? activePO.date : '—';
+              const trackingStatus = activePO ? activePO.status : 'No active orders';
+              const statusCol = activePO?.status === 'Pending' ? '#a8510a' : activePO?.status === 'Received' ? '#026d43' : 'var(--mu)';
+
+              return (
               <tr key={s.id}>
-                <td><span className="chip mo">{s.id}</span></td>
-                <td><strong>{s.name}</strong></td>
-                <td><span className="chip" style={{ fontSize: '11px' }}>{s.catFrom}</span></td>
-                <td><span className="chip" style={{ fontSize: '11px', background: '#f1f5f9' }}>{s.catTo}</span></td>
                 <td>
-                  <div style={{ fontSize: '12px' }}>{s.mobile}</div>
-                  <div style={{ fontSize: '10px', color: 'var(--mu)' }}>{s.email}</div>
+                  <strong>{s.name}</strong>
+                  <div style={{ fontSize: '10px', color: 'var(--mu)' }}>{s.id}</div>
                 </td>
-                <td><span className={`badge ${s.status === 'Active' ? 'bg' : 'ba'}`}>{s.status}</span></td>
+                <td>
+                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    <span className="chip" style={{ fontSize: '10px' }}>{s.catFrom}</span>
+                    <span style={{ fontSize: '10px', color: 'var(--mu)' }}>→</span>
+                    <span className="chip" style={{ fontSize: '10px', background: '#f1f5f9' }}>{s.catTo}</span>
+                  </div>
+                </td>
+                <td className="mo" style={{ fontWeight: 600 }}>{totalQty > 0 ? totalQty + ' Units' : '—'}</td>
+                <td className="mo" style={{ fontSize: '12px' }}>{appliedDate}</td>
+                <td className="mo" style={{ fontSize: '12px', fontWeight: 600 }}>{receivingDate}</td>
+                <td><span className="badge" style={{ border: `1px solid ${statusCol}`, color: statusCol, background: 'transparent' }}>{trackingStatus}</span></td>
                 <td className="tc">
                   <div className="act-btns">
                     <button className="btn be" style={{ padding: '4px 9px', fontSize: '11px' }} onClick={() => handleOpen(s)}>✏️</button>
@@ -100,7 +116,8 @@ export default function Suppliers({ searchQuery = '' }) {
                   </div>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

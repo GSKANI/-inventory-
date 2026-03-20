@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Warehouse({ searchQuery = '' }) {
+export default function Warehouse({ searchQuery = '', pos, setPos }) {
   const [components, setComponents] = useState([
     { id: 'C1', short: 'VCB', name: 'Vacuum Circuit Breakers (11kV)', code: 'COMP-VCB-11K', cat: 'HT', loc: 'A-11', inStock: 14, reorder: 5, status: 'Healthy', statusClass: 'bg', colorC: 'bfg', percent: 70 },
     { id: 'C2', short: 'ACB', name: 'Air Circuit Breakers (1600A)', code: 'COMP-ACB-1600', cat: 'LT', loc: 'B-04', inStock: 7, reorder: 10, status: 'Low Stock', statusClass: 'ba', colorC: 'bfa', percent: 35 },
@@ -10,6 +10,7 @@ export default function Warehouse({ searchQuery = '' }) {
 
   const [orderModal, setOrderModal] = useState(false);
   const [orderItem, setOrderItem] = useState(null);
+  const [orderForm, setOrderForm] = useState({ qty: 0, date: '' });
 
   // Derive counts
   const lowStockCount = components.filter(c => c.inStock <= c.reorder).length;
@@ -22,12 +23,30 @@ export default function Warehouse({ searchQuery = '' }) {
 
   const handleOrderClick = (c) => {
     setOrderItem(c);
+    setOrderForm({
+      qty: (c.reorder * 2) - c.inStock,
+      date: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]
+    });
     setOrderModal(true);
   };
 
   const handleOrderSubmit = () => {
-    // In a real app we'd save this to Orders
-    alert(`Order Form Sent to Supplier for ${orderItem.name}!`);
+    if (pos && setPos) {
+      const supp = orderItem.cat === 'HT' ? 'Crompton Greaves (HT Supplies)' : 'Schneider Electric (LT Supplies)';
+      const newPo = {
+        id: `PO-${Date.now().toString().slice(-4)}`,
+        comp: orderItem.name,
+        qty: orderItem.unit || 'nos',
+        qtyNum: Number(orderForm.qty),
+        supplier: supp,
+        rate: 550, // mock base rate
+        appliedDate: new Date().toISOString().split('T')[0],
+        date: orderForm.date,
+        status: 'Pending'
+      };
+      setPos([newPo, ...pos]);
+    }
+    alert(`Order Form Sent to Supplier for ${orderItem.name}! Tracking and quantities updated.`);
     setOrderModal(false);
   };
 
@@ -117,13 +136,13 @@ export default function Warehouse({ searchQuery = '' }) {
 
                 <div className="fld">
                   <label>Order Quantity Needed</label>
-                  <input type="number" defaultValue={(orderItem.reorder * 2) - orderItem.inStock} className="f-inp" />
+                  <input type="number" value={orderForm.qty} onChange={(e) => setOrderForm({ ...orderForm, qty: Number(e.target.value) })} className="f-inp" />
                   <div style={{ fontSize: '11px', color: 'var(--mu)', marginTop: '4px' }}>Recommended auto-replenishment qty</div>
                 </div>
 
                 <div className="fld">
                   <label>Expected Delivery Request</label>
-                  <input type="date" className="f-inp" defaultValue={new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]} />
+                  <input type="date" className="f-inp" value={orderForm.date} onChange={(e) => setOrderForm({ ...orderForm, date: e.target.value })} />
                 </div>
               </div>
             </div>
