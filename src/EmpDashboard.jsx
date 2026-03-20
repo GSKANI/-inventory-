@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import { INITIAL_WORK_LOGS, ALL_SERVICES, today, todayStr, dF, fmt } from './data';
+import CheckIn from './CheckIn';
+import CameraScanner from './CameraScanner';
+import Sidebar from './Sidebar';
 
 export default function EmpDashboard({ currentUser, assigns }) {
   const [chartView, setChartView] = useState('hours');
   const [checkInModal, setCheckInModal] = useState(false);
+  const [cameraModal, setCameraModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [todayWorkLog, setTodayWorkLog] = useState(null);
+  const [scannedQR, setScannedQR] = useState(null);
+
   const usr = currentUser.username;
   const logs = INITIAL_WORK_LOGS[usr] || [];
   const myServices = ALL_SERVICES.filter(s => s.emp === usr);
@@ -23,17 +31,40 @@ export default function EmpDashboard({ currentUser, assigns }) {
 
   const todayLog = logs.find(l => l.date === todayStr);
 
+  const handleCheckIn = (checkInEntry) => {
+    console.log('Check-in:', checkInEntry);
+    setTodayWorkLog(checkInEntry);
+  };
+
+  const handleQRScan = (qrData) => {
+    console.log('QR Scanned:', qrData);
+    setScannedQR(qrData);
+    setCameraModal(false);
+  };
+
+  const handleAddWorkEntry = () => {
+    setCheckInModal(true);
+  };
+
   return (
-    <div className="view pg on" style={{ animation: 'fin .2s ease' }}>
-      <div className="pgh">
-        <div>
-          <div className="pgt">{greet}, {currentUser.name.split(' ')[0]}! 👋</div>
-          <div className="pgs">
-            {today.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+    <>
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} currentUser={currentUser} />
+      <div className="view pg on" style={{ animation: 'fin .2s ease' }}>
+        <div className="pgh">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button className="btn-sidebar" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+            <div>
+              <div className="pgt">{greet}, {currentUser.name.split(' ')[0]}! 👋</div>
+              <div className="pgs">
+                {today.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button className="btn bp" onClick={() => setCameraModal(true)} title="Scan QR Code">📷</button>
+            <button className="btn bp" onClick={handleAddWorkEntry}>+ Log Work</button>
           </div>
         </div>
-        <button className="btn bp">+ Log Today's Work</button>
-      </div>
 
       <div className="sg sg4" style={{ marginBottom: '18px' }}>
         <div className="sc"><div className="sct"><div className="scl">Hours This Week</div><div className="sci">⏱️</div></div><div className="scv">{weekHours}</div><div className="scf">logged hours</div></div>
@@ -215,20 +246,56 @@ export default function EmpDashboard({ currentUser, assigns }) {
               
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ fontSize: '11.5px', fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: '6px' }}>LOCATION PHOTO</label>
-                <div style={{ border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '30px 20px', textAlign: 'center', background: '#f8fafc', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
+                <div style={{ border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '30px 20px', textAlign: 'center', background: '#f8fafc', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'} onClick={() => setCameraModal(true)}>
                   <div style={{ fontSize: '32px', marginBottom: '8px' }}>📷</div>
                   <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Tap to Capture Selfie</div>
                   <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Geo-tags will be embedded automatically</div>
                 </div>
+                {scannedQR && (
+                  <div style={{ marginTop: '8px', padding: '8px', background: '#d1fae5', border: '1px solid #10b981', borderRadius: '4px', fontSize: '12px', color: '#047857' }}>
+                    ✓ QR Code Scanned: {scannedQR}
+                  </div>
+                )}
               </div>
             </div>
             <div className="mft">
               <button className="btn bw" onClick={() => setCheckInModal(false)}>Cancel</button>
-              <button className="btn" style={{ background: '#10b981', color: '#fff', border: '1px solid #059669' }} onClick={() => { alert('Attendance Logged Successfully with GPS Coordinates!'); setCheckInModal(false); }}>🚀 Submit Log</button>
+              <button className="btn" style={{ background: '#10b981', color: '#fff', border: '1px solid #059669' }} onClick={() => { handleCheckIn({ timestamp: new Date().toISOString(), qrData: scannedQR }); setCheckInModal(false); }}>🚀 Submit Log</button>
             </div>
           </div>
         </div>
       )}
+
+      {cameraModal && (
+        <CameraScanner
+          onScan={handleQRScan}
+          onClose={() => setCameraModal(false)}
+          title="Capture Site Photo & Scan QR"
+        />
+      )}
+
+      {todayWorkLog && (
+        <div className="card" style={{ position: 'fixed', bottom: '20px', right: '20px', width: '300px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+          <div className="ch" style={{ background: '#d1fae5' }}>
+            <div className="ct" style={{ color: '#047857' }}>✓ Check-In Logged</div>
+            <button onClick={() => setTodayWorkLog(null)} className="cbtn">×</button>
+          </div>
+          <div style={{ padding: '12px 14px', fontSize: '12px' }}>
+            <div style={{ marginBottom: '6px' }}>
+              <strong>Time:</strong> {todayWorkLog.time}
+            </div>
+            <div style={{ marginBottom: '6px' }}>
+              <strong>Location:</strong> {todayWorkLog.location}
+            </div>
+            {todayWorkLog.qrData && (
+              <div style={{ marginBottom: '6px' }}>
+                <strong>QR:</strong> {todayWorkLog.qrData}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
+    </>
   );
 }
