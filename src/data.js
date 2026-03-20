@@ -136,9 +136,15 @@ export const INITIAL_WORK_LOGS = {
 };
 
 export const ALL_SERVICES = [
-  { id: 'SVC-0031', type: 'Transformer Oil Filtration', client: 'TANGEDCO · Hosur', date: '2026-03-14', status: 'Completed', value: 45000, emp: 'emp001' },
-  { id: 'SVC-0030', type: 'Circuit Breaker Overhauling', client: 'Chemplast · Cuddalore', date: '2026-03-18', status: 'In Progress', value: 28000, emp: 'emp001' },
-  { id: 'SVC-0029', type: 'Earth Pit Testing', client: 'Aavin Dairy · Coimbatore', date: '2026-03-19', status: 'In Progress', value: 18000, emp: 'emp001' },
+  { id: 'SVC-0035', type: 'Overhauling & testing of Circuit breakers', client: 'TANGEDCO', date: '2026-03-14', status: 'Completed', value: 45000, emp: 'emp001' },
+  { id: 'SVC-0034', type: 'Transformer oil filtration, testing & oil leakage arresting', client: 'Chemplast', date: '2026-03-18', status: 'In Progress', value: 28000, emp: 'emp001' },
+  { id: 'SVC-0033', type: 'Earth pit testing & Installation', client: 'Aavin Dairy', date: '2026-03-19', status: 'In Progress', value: 18000, emp: 'emp001' },
+  { id: 'SVC-0032', type: 'Testing & calibration of relays', client: 'Srinivasa Textiles', date: '2026-03-21', status: 'Pending', value: 12000, emp: 'emp002' },
+  { id: 'SVC-0031', type: 'Testing & calibration of meters', client: 'MRF Tyres', date: '2026-03-22', status: 'Pending', value: 9000, emp: 'emp003' },
+  { id: 'SVC-0030', type: 'Panel erection & Cable laying', client: 'Hyundai Motors', date: '2026-03-15', status: 'Completed', value: 85000, emp: 'emp001' },
+  { id: 'SVC-0029', type: 'Cable laying termination', client: 'Hyundai Motors', date: '2026-03-16', status: 'Completed', value: 34000, emp: 'emp002' },
+  { id: 'SVC-0028', type: 'Thermography', client: 'L&T Construction', date: '2026-03-25', status: 'Pending', value: 15000, emp: 'emp003' },
+  { id: 'SVC-0027', type: 'CT & PT testing', client: 'TANGEDCO', date: '2026-03-26', status: 'Pending', value: 22000, emp: 'emp001' }
 ];
 
 export const ASSIGNS = [
@@ -148,8 +154,22 @@ export const ASSIGNS = [
 ];
 
 export const INITIAL_PRODS = [
-  { id: 1, name: 'HT VCB Panel Boards', code: 'PNL-VCB-HT', cat: 'HT', rating: '3.3kV – 33kV', inProd: 3, ready: 2, lead: '8–12 wks', status: 'Active' },
-  { id: 2, name: 'LT ACB Panel Boards', code: 'PNL-ACB-LT', cat: 'LT', rating: '400A – 4000A', inProd: 2, ready: 1, lead: '4–8 wks', status: 'Active' },
+  { id: 1, name: 'HT VCB Panel Boards (3.3 KV – 33 KV)', code: 'PNL-VCB-HT', cat: 'HT', rating: '3.3kV–33kV', inProd: 2, ready: 1, lead: '8-12 wks', status: 'Active' },
+  { id: 2, name: 'LT OCB Panel Boards (200 A -1200 A)', code: 'PNL-OCB-LT', cat: 'LT', rating: '200A-1200A', inProd: 0, ready: 0, lead: '6-8 wks', status: 'Active' },
+  { id: 3, name: 'LT ACB Panel Boards (400A – 4000A)', code: 'PNL-ACB-LT', cat: 'LT', rating: '400A–4000A', inProd: 1, ready: 0, lead: '6-8 wks', status: 'Active' },
+  { id: 4, name: 'PCC/MCC Panel Boards', code: 'PNL-PCC-MCC', cat: 'LT', rating: 'Custom', inProd: 3, ready: 1, lead: '4-6 wks', status: 'Active' },
+  { id: 5, name: 'Synchronizing Panel Boards', code: 'PNL-SYNC', cat: 'LT', rating: 'Custom', inProd: 0, ready: 0, lead: '6-8 wks', status: 'Active' },
+  { id: 6, name: 'Distribution Panel Boards', code: 'PNL-DIST', cat: 'LT', rating: 'Standard', inProd: 2, ready: 4, lead: '3-5 wks', status: 'Active' },
+  { id: 7, name: 'Metering Panel Boards', code: 'PNL-METER', cat: 'Control', rating: 'Standard', inProd: 0, ready: 2, lead: '3-4 wks', status: 'Active' },
+  { id: 8, name: 'Annunciator Panel Boards', code: 'PNL-ANNUN', cat: 'Control', rating: 'Custom', inProd: 0, ready: 0, lead: '4-6 wks', status: 'Active' },
+  { id: 9, name: 'APFC Panel Boards', code: 'PNL-APFC', cat: 'LT', rating: 'Standard', inProd: 1, ready: 1, lead: '4-6 wks', status: 'Active' },
+  { id: 10, name: 'Control Panel Boards', code: 'PNL-CTRL', cat: 'Control', rating: 'Custom', inProd: 4, ready: 2, lead: '3-6 wks', status: 'Active' },
+  { id: 11, name: 'Battery Charger & LT Changeover Panel', code: 'PNL-BATT', cat: 'DC/LT', rating: 'Standard', inProd: 0, ready: 0, lead: '5-7 wks', status: 'Active' },
+  { id: 12, name: 'AB Switch & Isolators MCCB & Switch Fuse Units', code: 'SW-AB-MCCB', cat: 'Switchgear', rating: 'Standard', inProd: 0, ready: 10, lead: '2-4 wks', status: 'Active' },
+  { id: 13, name: 'Load Break Switch Panel board', code: 'PNL-LBS', cat: 'Medium', rating: 'Standard', inProd: 0, ready: 0, lead: '4-6 wks', status: 'Active' },
+  { id: 14, name: 'RETROFIT', code: 'SVC-RETRO', cat: 'Service/Upgrades', rating: 'Custom', inProd: 1, ready: 0, lead: 'Variable', status: 'Active' },
+  { id: 15, name: 'CIRCUIT BREAKERS', code: 'COMP-CB', cat: 'Components', rating: 'Various', inProd: 0, ready: 45, lead: '1-3 wks', status: 'Active' },
+  { id: 16, name: 'SPARES', code: 'COMP-SPR', cat: 'Components', rating: 'Various', inProd: 0, ready: 120, lead: 'Ex-stock', status: 'Active' }
 ];
 
 export const INITIAL_POS = [
@@ -169,8 +189,10 @@ export const EMPS_DATA = [
 ];
 
 export const PROJECTS = [
-  { id: 'PRJ-001', name: 'TANGEDCO – Hosur Sub-Station', client: 'TANGEDCO', type: 'Pre & Post Commissioning', end: '2026-03-25', budget: 2400000, priority: 'High', progress: 82, team: ['K. Suresh Kumar', 'S. Pradeep'] },
-  { id: 'PRJ-002', name: 'Aavin Dairy – MCC Installation', client: 'Aavin Dairy', type: 'Complete Industrial Project', end: '2026-04-10', budget: 1200000, priority: 'High', progress: 58, team: ['R. Venkatesan', 'P. Balamurugan'] },
+  { id: 'PRJ-001', name: 'TANGEDCO – Hosur Sub-Station', client: 'TANGEDCO', type: 'ELECTRICAL PRE & POST COMMISSIONING', end: '2026-03-25', budget: 2400000, priority: 'High', progress: 82, team: ['K. Suresh Kumar', 'S. Pradeep'] },
+  { id: 'PRJ-002', name: 'Aavin Dairy – MCC Installation', client: 'Aavin Dairy', type: 'COMPLETE INDUSTRIAL ELECTRICAL', end: '2026-04-10', budget: 1200000, priority: 'High', progress: 58, team: ['R. Venkatesan', 'P. Balamurugan'] },
+  { id: 'PRJ-003', name: 'MRF Tyres – CEIG Handover', client: 'MRF Tyres', type: 'CEIG CO-ORDINATION WORK', end: '2026-05-15', budget: 850000, priority: 'Medium', progress: 20, team: ['K. Suresh Kumar'] },
+  { id: 'PRJ-004', name: 'Hyundai – Line 2 Safety Upgrade', client: 'Hyundai Motors', type: 'RULE 30', end: '2026-04-05', budget: 450000, priority: 'Medium', progress: 10, team: ['S. Pradeep', 'R. Venkatesan'] },
 ];
 
 export const PAYROLL_DATA = [
