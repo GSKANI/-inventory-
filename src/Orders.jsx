@@ -4,6 +4,8 @@ import { fmt } from './data';
 export default function Orders({ pos, setPos, searchQuery = '' }) {
   const [filter, setFilter] = useState('all');
   const [modalOpen, setModalOpen] = useState(false);
+  const [trackOpen, setTrackOpen] = useState(false);
+  const [trackItem, setTrackItem] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
   const initialForm = {
@@ -101,6 +103,7 @@ export default function Orders({ pos, setPos, searchQuery = '' }) {
                 <td><span className={`badge ${STATUS_STYLE[po.status] || 'bz'}`}>{po.status}</span></td>
                 <td className="tc">
                   <div className="act-btns">
+                    <button className="btn bo" style={{ padding: '4px 9px', fontSize: '11px', background: '#fff', border: '1px solid #d1d5db', color: '#111827' }} onClick={() => { setTrackItem(po); setTrackOpen(true); }}>📍 Track</button>
                     <button className="btn be" style={{ padding: '4px 9px', fontSize: '11px' }} onClick={() => handleOpen(po)}>✏️</button>
                     <button className="btn bd" style={{ padding: '4px 9px', fontSize: '11px' }} onClick={() => handleDelete(po.id)}>🗑️</button>
                   </div>
@@ -168,11 +171,105 @@ export default function Orders({ pos, setPos, searchQuery = '' }) {
             </div>
             <div className="mft">
               <button className="btn bw" onClick={() => setModalOpen(false)}>Cancel</button>
-              <button className="btn bp" onClick={handleSave}>{editingItem ? 'Update PO' : 'Raise PO'}</button>
+              <button className="btn bp" onClick={handleSave}>{editingItem ? 'Update PO' : 'Save Purchase Order'}</button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Advanced Order Tracking Visual Modal */}
+      {trackOpen && trackItem && (
+        <div className="ov on" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="mdl" style={{ width: '800px', maxWidth: '95%', padding: 0 }}>
+            {/* Header */}
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--bd)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', borderRadius: '8px 8px 0 0' }}>
+              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--tx)' }}>PO Tracking Process</div>
+              <div className="cbtn" onClick={() => setTrackOpen(false)}>×</div>
+            </div>
+            
+            <div style={{ padding: '24px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 500, color: '#475569', borderBottom: '1px solid var(--bd)', paddingBottom: '12px', marginBottom: '16px' }}>
+                Order ID: <strong>{trackItem.id}</strong>
+              </div>
+
+              {/* Grid Status Info */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '40px', fontSize: '12px', color: '#64748b' }}>
+                <div>
+                  <div>Estimated Delivery time:</div>
+                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '4px' }}>{fmt(trackItem.date)}</div>
+                </div>
+                <div>
+                  <div>Shipping BY:</div>
+                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '4px' }}>{trackItem.supplier.includes('Crompton') ? 'BLUEDART' : 'DTDC'}, | 📞 +91 98400 12345</div>
+                </div>
+                <div>
+                  <div>Status:</div>
+                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '4px' }}>{trackItem.status === 'Received' ? 'Delivered' : 'On the way'}</div>
+                </div>
+                <div>
+                  <div>Tracking #:</div>
+                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '4px' }}>BD{Math.floor(Math.random() * 90000000) + 10000000}</div>
+                </div>
+              </div>
+
+              {/* Graphic Stepper UI */}
+              <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', marginBottom: '40px' }}>
+                {/* Background Line */}
+                <div style={{ position: 'absolute', top: '15px', left: '40px', right: '40px', height: '4px', background: '#e2e8f0', zIndex: 0 }}></div>
+                {/* Active Line Overlap */}
+                <div style={{ position: 'absolute', top: '15px', left: '40px', right: '40px', height: '4px', background: trackItem.status === 'Received' ? '#ea580c' : 'linear-gradient(to right, #ea580c 50%, transparent 50%)', zIndex: 1 }}></div>
+
+                {/* Step 1 */}
+                <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
+                  <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#ea580c', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 0 0 4px #fff' }}>✓</div>
+                  <div style={{ fontSize: '11px', fontWeight: 500, color: '#333', marginTop: '12px', textAlign: 'center' }}>Order confirmed</div>
+                </div>
+
+                {/* Step 2 */}
+                <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
+                  <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#ea580c', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', boxShadow: '0 0 0 4px #fff' }}>👤</div>
+                  <div style={{ fontSize: '11px', fontWeight: 500, color: '#333', marginTop: '12px', textAlign: 'center' }}>Picked by courier</div>
+                </div>
+
+                {/* Step 3 */}
+                <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
+                  <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: trackItem.status === 'Received' ? '#ea580c' : '#e2e8f0', color: trackItem.status === 'Received' ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', boxShadow: '0 0 0 4px #fff' }}>🚚</div>
+                  <div style={{ fontSize: '11px', fontWeight: 500, color: '#333', marginTop: '12px', textAlign: 'center' }}>On the way</div>
+                </div>
+
+                {/* Step 4 */}
+                <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
+                  <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: trackItem.status === 'Received' ? '#ea580c' : '#e2e8f0', color: trackItem.status === 'Received' ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', boxShadow: '0 0 0 4px #fff' }}>📦</div>
+                  <div style={{ fontSize: '11px', fontWeight: 500, color: '#333', marginTop: '12px', textAlign: 'center' }}>Ready for pickup</div>
+                </div>
+              </div>
+
+              {/* Items Detail Area */}
+              <div style={{ display: 'flex', gap: '24px', alignItems: 'center', padding: '24px 0', borderTop: '1px solid var(--bd)', borderBottom: '1px solid var(--bd)' }}>
+                <div style={{ width: '60px', height: '60px', background: '#f1f5f9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>⚙️</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--tx)' }}>{trackItem.comp}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--mu)', marginTop: '4px' }}>Supplier: {trackItem.supplier}</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bl)', marginTop: '4px' }}>₹{(trackItem.rate * trackItem.qtyNum).toLocaleString('en-IN')}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                   <div style={{ fontSize: '12px', color: 'var(--mu)', marginBottom: '4px' }}>Quantity</div>
+                   <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--tx)' }}>{trackItem.qty}</div>
+                </div>
+              </div>
+
+              {/* Footer Btn */}
+              <div style={{ marginTop: '24px' }}>
+                <button className="btn bo" style={{ background: '#ea580c', color: 'white', border: 'none', padding: '8px 16px', fontWeight: 600 }} onClick={() => setTrackOpen(false)}>
+                  &lt; Back to orders
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
