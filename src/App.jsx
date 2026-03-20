@@ -26,7 +26,7 @@ import EmpProducts from './EmpProducts';
 import EmpOrders from './EmpOrders';
 import EmpScanner from './EmpScanner';
 
-import { INITIAL_PRODS, INITIAL_POS, getInitials, ASSIGNS, PROJECTS, exportToCSV, PAYROLL_DATA, INVOICES } from './data';
+import { INITIAL_PRODS, INITIAL_POS, getInitials, ASSIGNS, PROJECTS, exportToCSV, PAYROLL_DATA, INVOICES, ALL_SERVICES } from './data';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -41,6 +41,7 @@ export default function App() {
   ]);
   const [assigns, setAssigns] = useState(ASSIGNS);
   const [projects, setProjects] = useState(PROJECTS);
+  const [services, setServices] = useState(ALL_SERVICES);
   const [searchQuery, setSearchQuery] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -222,7 +223,7 @@ export default function App() {
           </div>
           <div className="sr">
             <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+              <path fillRule="evenodd" d="M8 4a4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
             </svg>
             <input type="text" placeholder="Search page contents…" id="searchGlobal" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
@@ -254,7 +255,7 @@ export default function App() {
             {currentView === 'suppliers' && <Suppliers searchQuery={searchQuery} pos={pos} />}
             {currentView === 'warehouse' && <Warehouse searchQuery={searchQuery} pos={pos} setPos={setPos} warehouseStock={warehouseStock} setWarehouseStock={setWarehouseStock} />}
             {currentView === 'manufacturing' && <Manufacturing searchQuery={searchQuery} warehouseStock={warehouseStock} setWarehouseStock={setWarehouseStock} />}
-            {currentView === 'services' && <Services searchQuery={searchQuery} />}
+            {currentView === 'services' && <Services searchQuery={searchQuery} services={services} setServices={setServices} />}
             {currentView === 'invoices' && <Invoices searchQuery={searchQuery} />}
             {currentView === 'performa' && <Performa />}
             {currentView === 'employees' && <Employees searchQuery={searchQuery} />}
@@ -267,7 +268,7 @@ export default function App() {
           <>
             {currentView === 'main-dash' && <EmpDashboard currentUser={currentUser} assigns={assigns} searchQuery={searchQuery} />}
             {currentView === 'emp-worklog' && <EmpWorkLog currentUser={currentUser} searchQuery={searchQuery} />}
-            {currentView === 'emp-services' && <EmpServices currentUser={currentUser} searchQuery={searchQuery} />}
+            {currentView === 'emp-services' && <EmpServices currentUser={currentUser} searchQuery={searchQuery} services={services} setServices={setServices} />}
             {currentView === 'emp-profile' && <EmpProfile currentUser={currentUser} assigns={assigns} />}
             {currentView === 'emp-scanner' && <EmpScanner currentUser={currentUser} />}
             {currentView === 'emp-products' && <EmpProducts prods={prods} searchQuery={searchQuery} />}

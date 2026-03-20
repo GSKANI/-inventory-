@@ -1,10 +1,13 @@
-import React from 'react';
-import { ALL_SERVICES, USERS, rC, getInitials, fmt } from './data';
+import React, { useState } from 'react';
+import { USERS, rC, getInitials, fmt } from './data';
 
-export default function Services({ searchQuery = '' }) {
+export default function Services({ searchQuery = '', services = [], setServices }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [formData, setFormData] = useState({ id: `SVC-${Math.floor(Math.random() * 9000).toString()}`, type: '', client: '', date: new Date().toISOString().split('T')[0], status: 'Pending', value: 0, emp: 'emp001' });
+
   const SS = { Completed: 'bg', 'In Progress': 'bb', Pending: 'ba' };
 
-  let filtered = ALL_SERVICES;
+  let filtered = services;
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     filtered = filtered.filter(s => s.type.toLowerCase().includes(q) || s.client.toLowerCase().includes(q) || s.id.toLowerCase().includes(q));
@@ -17,6 +20,7 @@ export default function Services({ searchQuery = '' }) {
           <div className="pgt">Service Jobs</div>
           <div className="pgs">Field service and overhauling jobs</div>
         </div>
+        <button className="btn bp" onClick={() => { setFormData({ ...formData, id: `SVC-${Math.floor(Math.random() * 9000).toString()}` }); setModalOpen(true); }}>+ Create Job</button>
       </div>
       <div className="card">
         <div className="ch"><div className="ct">All Service Jobs</div></div>
@@ -57,6 +61,61 @@ export default function Services({ searchQuery = '' }) {
           </tbody>
         </table>
       </div>
+
+      {modalOpen && (
+        <div className="ov on">
+          <div className="mdl" style={{ width: '450px' }}>
+            <div className="mhd">
+              <div>
+                <div className="mht">Assign New Service Job</div>
+                <div className="mhs">{formData.id}</div>
+              </div>
+              <div className="cbtn" onClick={() => setModalOpen(false)}>×</div>
+            </div>
+            <div className="mbd">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="fld">
+                  <label>Service Type *</label>
+                  <input type="text" placeholder="e.g. Transformer Oil Filtration" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })} />
+                </div>
+                <div className="fld">
+                  <label>Client / Site *</label>
+                  <input type="text" placeholder="e.g. TANGEDCO" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="fld">
+                    <label>Scheduled Date</label>
+                    <input type="date" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
+                  </div>
+                  <div className="fld">
+                    <label>Job Value (₹)</label>
+                    <input type="number" value={formData.value} onChange={e => setFormData({ ...formData, value: Number(e.target.value) })} />
+                  </div>
+                </div>
+                <div className="fld">
+                  <label>Assign to Employee</label>
+                  <select value={formData.emp} onChange={e => setFormData({ ...formData, emp: e.target.value })}>
+                    {Object.keys(USERS).filter(k => USERS[k].role === 'employee').map(k => (
+                      <option key={k} value={k}>{USERS[k].name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="mft">
+              <button className="btn bw" onClick={() => setModalOpen(false)}>Cancel</button>
+              <button className="btn bp" onClick={() => {
+                if(formData.type && formData.client && setServices) {
+                  setServices([{ ...formData }, ...services]);
+                  setModalOpen(false);
+                  alert(`Successfully assigned ${formData.type} to ${USERS[formData.emp].name}`);
+                }
+              }}>Assign Job</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
