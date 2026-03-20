@@ -9,11 +9,16 @@ export default function EmpDashboard({ currentUser, assigns }) {
   const [cameraModal, setCameraModal] = useState(false);
   const [todayWorkLog, setTodayWorkLog] = useState(null);
   const [scannedQR, setScannedQR] = useState(null);
+  const [selectedProj, setSelectedProj] = useState('');
 
   const usr = currentUser.username;
   const logs = INITIAL_WORK_LOGS[usr] || [];
   const myServices = ALL_SERVICES.filter(s => s.emp === usr);
   const myAssigns = assigns.filter(a => a.emp === usr);
+
+  const currentProj = selectedProj || (myAssigns.length > 0 ? myAssigns[0].proj : 'other');
+  const selA = myAssigns.find(a => a.proj === currentProj);
+  const isLiveSite = selA ? (selA.role.includes('Site') || selA.role.includes('QC') || selA.proj.includes('Sub-Station')) : false;
 
   const hr = new Date().getHours();
   const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
@@ -41,6 +46,7 @@ export default function EmpDashboard({ currentUser, assigns }) {
   };
 
   const handleAddWorkEntry = () => {
+    if (!selectedProj && myAssigns.length > 0) setSelectedProj(myAssigns[0].proj);
     setCheckInModal(true);
   };
 
@@ -201,7 +207,7 @@ export default function EmpDashboard({ currentUser, assigns }) {
                   <span style={{ color: 'var(--rd)', fontWeight: 600 }}>⚠ No log submitted for today yet.</span>
                 )}
               </div>
-              <button className="btn bp" style={{ width: '100%' }}>+ Add Today's Work Update</button>
+              <button className="btn bp" style={{ width: '100%' }} onClick={handleAddWorkEntry}>+ Add Today's Work Update</button>
             </div>
           </div>
 
@@ -211,9 +217,13 @@ export default function EmpDashboard({ currentUser, assigns }) {
             </div>
             <div style={{ padding: '16px', textAlign: 'center' }}>
               <div style={{ fontSize: '12px', color: '#047857', marginBottom: '12px', fontWeight: 600 }}>Update your on-site attendance securely using GPS mapped photos.</div>
-              <button className="btn bg" style={{ width: '100%', display: 'flex', justifyContent: 'center', background: '#10b981', color: '#fff', border: 'none' }} onClick={() => setCheckInModal(true)}>
+              <button className="btn bg" style={{ width: '100%', display: 'flex', justifyContent: 'center', background: '#10b981', color: '#fff', border: 'none', marginBottom: '8px' }} onClick={() => setCheckInModal(true)}>
                 📷 Open Camera & Check-in
               </button>
+              <a href="intent://#Intent;package=com.google.ar.lens;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end" className="btn bp" style={{ width: '100%', display: 'flex', justifyContent: 'center', background: '#4285F4', color: '#fff', border: 'none' }}>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Google_Lens_-_new_logo.png" alt="Google Lens" style={{ width: '16px', height: '16px', marginRight: '8px', filter: 'brightness(0) invert(1)' }}/>
+                Link with Google Lens
+              </a>
             </div>
           </div>
         </div>
@@ -223,11 +233,21 @@ export default function EmpDashboard({ currentUser, assigns }) {
         <div className="ov on">
           <div className="mdl" style={{ width: '400px' }}>
             <div className="mhd">
-              <div className="mt">📍 Live Site Attendance</div>
+              <div className="mt">{isLiveSite ? "📍 Live Site Attendance" : "📝 Manual Work Entry"}</div>
               <div className="cbtn" onClick={() => setCheckInModal(false)}>×</div>
             </div>
             <div className="mbd">
-              <div style={{ background: '#f1f5f9', borderRadius: '8px', overflow: 'hidden', marginBottom: '16px', border: '1px solid #cbd5e1', position: 'relative' }}>
+              <div className="fld" style={{ marginBottom: '16px' }}>
+                <label>Project / Assignment</label>
+                <select value={currentProj} onChange={e => setSelectedProj(e.target.value)} style={{ padding: '10px 14px' }}>
+                  {myAssigns.map((a, i) => <option key={i} value={a.proj}>{a.proj} ({a.role})</option>)}
+                  <option value="other">Other / Office Work</option>
+                </select>
+              </div>
+              
+              {isLiveSite ? (
+                <>
+                  <div style={{ background: '#f1f5f9', borderRadius: '8px', overflow: 'hidden', marginBottom: '16px', border: '1px solid #cbd5e1', position: 'relative' }}>
                 <div style={{ height: '160px', background: 'url(https://maps.googleapis.com/maps/api/staticmap?center=12.9716,77.5946&zoom=14&size=400x160&sensor=false) center/cover, #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <div style={{ background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '6px 12px', borderRadius: '4px', fontSize: '12px', backdropFilter: 'blur(4px)' }}>
                     🌍 GPS Locked: Site A
@@ -253,6 +273,19 @@ export default function EmpDashboard({ currentUser, assigns }) {
                   </div>
                 )}
               </div>
+                </>
+              ) : (
+                <>
+                  <div className="fld">
+                    <label>Hours Worked</label>
+                    <input type="number" placeholder="Enter hours (e.g., 8)" style={{ padding: '10px 14px' }} />
+                  </div>
+                  <div className="fld" style={{ marginTop: '12px' }}>
+                    <label>Task Description / Updates</label>
+                    <textarea rows="3" placeholder="Describe work done..." style={{ padding: '10px 14px' }}></textarea>
+                  </div>
+                </>
+              )}
             </div>
             <div className="mft">
               <button className="btn bw" onClick={() => setCheckInModal(false)}>Cancel</button>
