@@ -1,8 +1,14 @@
 import React from 'react';
 import { ALL_SERVICES, USERS, rC, getInitials, fmt } from './data';
 
-export default function Services() {
+export default function Services({ searchQuery = '' }) {
   const SS = { Completed: 'bg', 'In Progress': 'bb', Pending: 'ba' };
+
+  let filtered = ALL_SERVICES;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(s => s.type.toLowerCase().includes(q) || s.client.toLowerCase().includes(q) || s.id.toLowerCase().includes(q));
+  }
 
   return (
     <div className="view pg on" style={{ animation: 'fin .2s ease' }}>
@@ -27,7 +33,7 @@ export default function Services() {
             </tr>
           </thead>
           <tbody>
-            {ALL_SERVICES.map(s => (
+            {filtered.map(s => (
               <tr key={s.id}>
                 <td><span className="chip mo">{s.id}</span></td>
                 <td>{s.type}</td>

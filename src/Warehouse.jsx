@@ -1,6 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export default function Warehouse() {
+export default function Warehouse({ searchQuery = '' }) {
+  const [components, setComponents] = useState([
+    { id: 'C1', short: 'VCB', name: 'Vacuum Circuit Breakers (11kV)', code: 'COMP-VCB-11K', cat: 'HT', loc: 'A-11', inStock: 14, reorder: 5, status: 'Healthy', statusClass: 'bg', colorC: 'bfg', percent: 70 },
+    { id: 'C2', short: 'ACB', name: 'Air Circuit Breakers (1600A)', code: 'COMP-ACB-1600', cat: 'LT', loc: 'B-04', inStock: 7, reorder: 10, status: 'Low Stock', statusClass: 'ba', colorC: 'bfa', percent: 35 },
+    { id: 'C3', short: 'INS', name: 'VCB Insulator Bushings', code: 'COMP-INS-VCB', cat: 'HT', loc: 'A-12', inStock: 12, reorder: 40, status: 'Critical', statusClass: 'br', colorC: 'bfr', percent: 12 },
+    { id: 'C4', short: 'BUS', name: 'Copper Busbar (100×10mm)', code: 'COMP-BUS-100', cat: 'LT', loc: 'C-02', inStock: 420, reorder: 100, status: 'Healthy', statusClass: 'bg', colorC: 'bfg', percent: 80, unit: 'm' }
+  ]);
+
+  const [orderModal, setOrderModal] = useState(false);
+  const [orderItem, setOrderItem] = useState(null);
+
+  // Derive counts
+  const lowStockCount = components.filter(c => c.inStock <= c.reorder).length;
+
+  let filtered = components;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(c => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || c.short.toLowerCase().includes(q));
+  }
+
+  const handleOrderClick = (c) => {
+    setOrderItem(c);
+    setOrderModal(true);
+  };
+
+  const handleOrderSubmit = () => {
+    // In a real app we'd save this to Orders
+    alert(`Order Form Sent to Supplier for ${orderItem.name}!`);
+    setOrderModal(false);
+  };
+
   return (
     <div className="view pg on" style={{ animation: 'fin .2s ease' }}>
       <div className="pgh">
@@ -10,8 +40,8 @@ export default function Warehouse() {
         </div>
       </div>
       <div className="sg sg3">
-        <div className="sc"><div className="sct"><div className="scl">Component SKUs</div></div><div className="scv">148</div><div className="scf">across categories</div></div>
-        <div className="sc"><div className="sct"><div className="scl">Low Stock Items</div></div><div className="scv" style={{ color: '#a8510a' }}>11</div><div className="scf">below reorder</div></div>
+        <div className="sc"><div className="sct"><div className="scl">Component SKUs</div></div><div className="scv">{components.length}</div><div className="scf">across categories</div></div>
+        <div className="sc"><div className="sct"><div className="scl">Low Stock Items</div></div><div className="scv" style={{ color: '#a8510a' }}>{lowStockCount}</div><div className="scf">below reorder</div></div>
         <div className="sc"><div className="sct"><div className="scl">Pending POs</div></div><div className="scv" style={{ color: '#b01f1f' }}>5</div><div className="scf">awaiting delivery</div></div>
       </div>
       <div className="card">
@@ -28,93 +58,83 @@ export default function Warehouse() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <div className="pcl">
-                  <div className="pav">VCB</div>
-                  <div>
-                    <div className="pn">Vacuum Circuit Breakers (11kV)</div>
-                    <div className="ps2">COMP-VCB-11K</div>
+            {filtered.map(c => (
+              <tr key={c.id}>
+                <td>
+                  <div className="pcl">
+                    <div className="pav">{c.short}</div>
+                    <div>
+                      <div className="pn">{c.name}</div>
+                      <div className="ps2">{c.code}</div>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td><span className="vtag">HT</span></td>
-              <td><span className="chip mo" style={{ fontSize: '11px', background: 'var(--sf)' }}>A-11</span></td>
-              <td>
-                <div className="sbar">
-                  <div className="btr"><div className="bfl bfg" style={{ width: '70%' }}></div></div>
-                  <span className="bnum">14</span>
-                </div>
-              </td>
-              <td className="mo" style={{ fontSize: '12px' }}>5</td>
-              <td><span className="badge bg">Healthy</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div className="pcl">
-                  <div className="pav">ACB</div>
-                  <div>
-                    <div className="pn">Air Circuit Breakers (1600A)</div>
-                    <div className="ps2">COMP-ACB-1600</div>
+                </td>
+                <td><span className={c.cat === 'HT' ? 'vtag' : 'svtag'}>{c.cat}</span></td>
+                <td><span className="chip mo" style={{ fontSize: '11px', background: 'var(--sf)' }}>{c.loc}</span></td>
+                <td>
+                  <div className="sbar">
+                    <div className="btr"><div className={`bfl ${c.colorC}`} style={{ width: `${c.percent}%` }}></div></div>
+                    <span className="bnum">{c.inStock}{c.unit || ''}</span>
                   </div>
-                </div>
-              </td>
-              <td><span className="svtag">LT</span></td>
-              <td><span className="chip mo" style={{ fontSize: '11px', background: 'var(--sf)' }}>B-04</span></td>
-              <td>
-                <div className="sbar">
-                  <div className="btr"><div className="bfl bfa" style={{ width: '35%' }}></div></div>
-                  <span className="bnum">7</span>
-                </div>
-              </td>
-              <td className="mo" style={{ fontSize: '12px' }}>10</td>
-              <td><span className="badge ba">Low Stock</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div className="pcl">
-                  <div className="pav">INS</div>
-                  <div>
-                    <div className="pn">VCB Insulator Bushings</div>
-                    <div className="ps2">COMP-INS-VCB</div>
-                  </div>
-                </div>
-              </td>
-              <td><span className="vtag">HT</span></td>
-              <td><span className="chip mo" style={{ fontSize: '11px', background: 'var(--sf)' }}>A-12</span></td>
-              <td>
-                <div className="sbar">
-                  <div className="btr"><div className="bfl bfr" style={{ width: '12%' }}></div></div>
-                  <span className="bnum">12</span>
-                </div>
-              </td>
-              <td className="mo" style={{ fontSize: '12px' }}>40</td>
-              <td><span className="badge br">Critical</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div className="pcl">
-                  <div className="pav">BUS</div>
-                  <div>
-                    <div className="pn">Copper Busbar (100×10mm)</div>
-                    <div className="ps2">COMP-BUS-100</div>
-                  </div>
-                </div>
-              </td>
-              <td><span className="svtag">LT</span></td>
-              <td><span className="chip mo" style={{ fontSize: '11px', background: 'var(--sf)' }}>C-02</span></td>
-              <td>
-                <div className="sbar">
-                  <div className="btr"><div className="bfl bfg" style={{ width: '80%' }}></div></div>
-                  <span className="bnum">420m</span>
-                </div>
-              </td>
-              <td className="mo" style={{ fontSize: '12px' }}>100m</td>
-              <td><span className="badge bg">Healthy</span></td>
-            </tr>
+                </td>
+                <td className="mo" style={{ fontSize: '12px' }}>{c.reorder}{c.unit || ''}</td>
+                <td>
+                  <span className={`badge ${c.statusClass}`} style={{ marginBottom: '4px', display: 'inline-block' }}>{c.status}</span>
+                  {c.inStock <= c.reorder && (
+                    <button className="btn bs" style={{ padding: '2px 6px', fontSize: '10px', display: 'block', width: '100%', marginTop: '4px', borderColor: '#a8510a', color: '#a8510a' }} onClick={() => handleOrderClick(c)}>
+                      + Order
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
+
+      {orderModal && orderItem && (
+        <div className="ov on">
+          <div className="mdl" style={{ width: '450px' }}>
+            <div className="mhd">
+              <div>
+                <div className="mht">Auto Supplier Order Form</div>
+                <div className="mhs">{orderItem.code}</div>
+              </div>
+              <div className="cbtn" onClick={() => setOrderModal(false)}>×</div>
+            </div>
+            <div className="mbd">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ padding: '12px', background: '#fffbeb', border: '1px solid #fef08a', borderRadius: '8px', fontSize: '12px', color: '#b45309', marginBottom: '8px' }}>
+                  <strong>{orderItem.name}</strong> is critically low ({orderItem.inStock}{orderItem.unit || ''} remaining vs minimum {orderItem.reorder}{orderItem.unit || ''}).
+                </div>
+                
+                <div className="fld">
+                  <label>Supplier (Auto-assigned based on category)</label>
+                  <select className="f-inp" readOnly value="supplier1">
+                    <option value="supplier1">{orderItem.cat === 'HT' ? 'Crompton Greaves (HT Supplies)' : 'Schneider Electric (LT Supplies)'}</option>
+                  </select>
+                </div>
+
+                <div className="fld">
+                  <label>Order Quantity Needed</label>
+                  <input type="number" defaultValue={(orderItem.reorder * 2) - orderItem.inStock} className="f-inp" />
+                  <div style={{ fontSize: '11px', color: 'var(--mu)', marginTop: '4px' }}>Recommended auto-replenishment qty</div>
+                </div>
+
+                <div className="fld">
+                  <label>Expected Delivery Request</label>
+                  <input type="date" className="f-inp" defaultValue={new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]} />
+                </div>
+              </div>
+            </div>
+            <div className="mft">
+              <button className="btn bw" onClick={() => setOrderModal(false)}>Cancel</button>
+              <button className="btn bp" onClick={handleOrderSubmit}>Submit to Supplier</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

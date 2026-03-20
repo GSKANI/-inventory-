@@ -1,10 +1,19 @@
 import React from 'react';
 import { fmt, dF } from './data';
 
-export default function Alerts({ assigns, projects }) {
-  const crit = projects.filter(p => { const d = dF(p.end); return d >= 0 && d <= 3; });
-  const soon = projects.filter(p => { const d = dF(p.end); return d > 3 && d <= 7; });
-  const acrit = assigns.filter(a => { const d = dF(a.end); return d >= 0 && d <= 3; });
+export default function Alerts({ assigns, projects, searchQuery = '' }) {
+  let searchedProjects = projects;
+  let searchedAssigns = assigns;
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    searchedProjects = projects.filter(p => p.name.toLowerCase().includes(q) || p.client.toLowerCase().includes(q));
+    searchedAssigns = assigns.filter(a => a.proj.toLowerCase().includes(q) || a.empName.toLowerCase().includes(q));
+  }
+
+  const crit = searchedProjects.filter(p => { const d = dF(p.end); return d >= 0 && d <= 3; });
+  const soon = searchedProjects.filter(p => { const d = dF(p.end); return d > 3 && d <= 7; });
+  const acrit = searchedAssigns.filter(a => { const d = dF(a.end); return d >= 0 && d <= 3; });
 
   const hasCrit = crit.length > 0 || acrit.length > 0;
 
@@ -46,7 +55,7 @@ export default function Alerts({ assigns, projects }) {
         <div className="sg sg3">
           <div className="sc"><div className="sct"><div className="scl">Due ≤ 3 Days</div></div><div className="scv" style={{ color: '#b01f1f' }}>{crit.length}</div></div>
           <div className="sc"><div className="sct"><div className="scl">Due 4–7 Days</div></div><div className="scv" style={{ color: '#a8510a' }}>{soon.length}</div></div>
-          <div className="sc"><div className="sct"><div className="scl">Overdue</div></div><div className="scv" style={{ color: '#b01f1f' }}>{projects.filter(p => dF(p.end) < 0).length}</div></div>
+          <div className="sc"><div className="sct"><div className="scl">Overdue</div></div><div className="scv" style={{ color: '#b01f1f' }}>{searchedProjects.filter(p => dF(p.end) < 0).length}</div></div>
         </div>
         <div className="card">
           <div className="ch"><div className="ct">All Deadlines</div></div>
@@ -63,7 +72,7 @@ export default function Alerts({ assigns, projects }) {
               </tr>
             </thead>
             <tbody>
-              {[...projects].sort((a, b) => dF(a.end) - dF(b.end)).map(p => {
+              {[...searchedProjects].sort((a, b) => dF(a.end) - dF(b.end)).map(p => {
                 const d = dF(p.end);
                 const pill = d < 0 ? <span className="dp">OVERDUE</span> : d <= 3 ? <span className="dp">{d}d</span> : d <= 7 ? <span className="sp">{d}d</span> : <span className="chip mo">{d}d</span>;
                 const bc = p.progress > 70 ? 'pfg' : p.progress > 40 ? 'pfb' : 'pfa';

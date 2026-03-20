@@ -1,9 +1,15 @@
 import React from 'react';
 import { INVOICES } from './data';
 
-export default function FinanceDashboard() {
-  const incomes = INVOICES.filter(i => i.status === 'Paid').reduce((s, i) => s + i.amount, 0);
-  const expectedIncomes = INVOICES.filter(i => i.status === 'Pending').reduce((s, i) => s + i.amount, 0);
+export default function FinanceDashboard({ searchQuery = '' }) {
+  let invs = INVOICES;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    invs = invs.filter(i => i.client.toLowerCase().includes(q) || i.id.toLowerCase().includes(q));
+  }
+
+  const incomes = invs.filter(i => i.status === 'Paid').reduce((s, i) => s + i.amount, 0);
+  const expectedIncomes = invs.filter(i => i.status === 'Pending').reduce((s, i) => s + i.amount, 0);
   
   // Mock outgoings based on POs or flat numbers for demo
   const outgoings = 240000; 

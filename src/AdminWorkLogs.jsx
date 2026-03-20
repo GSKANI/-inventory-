@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { INITIAL_WORK_LOGS, USERS, fmt, getInitials, rC } from './data';
 
-export default function AdminWorkLogs() {
+export default function AdminWorkLogs({ searchQuery = '' }) {
   const [filter, setFilter] = useState('all');
 
   // flatten worklogs
-  const allLogs = [];
+  let allLogs = [];
   Object.keys(INITIAL_WORK_LOGS).forEach(emp => {
     INITIAL_WORK_LOGS[emp].forEach(l => {
       allLogs.push({ ...l, emp });
     });
   });
 
-  const filtered = filter === 'all' ? allLogs : allLogs.filter(l => l.emp === filter);
+  let filtered = filter === 'all' ? allLogs : allLogs.filter(l => l.emp === filter);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(l => l.site.toLowerCase().includes(q) || l.task.toLowerCase().includes(q) || l.wo.toLowerCase().includes(q) || USERS[l.emp]?.name?.toLowerCase().includes(q));
+  }
 
   return (
     <div className="view pg on" style={{ animation: 'fin .2s ease' }}>

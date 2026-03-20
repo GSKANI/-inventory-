@@ -15,6 +15,7 @@ import Alerts from './Alerts';
 import AdminWorkLogs from './AdminWorkLogs';
 import FinanceDashboard from './FinanceDashboard';
 import Payroll from './Payroll';
+import Suppliers from './Suppliers';
 
 // Emp views
 import EmpDashboard from './EmpDashboard';
@@ -128,6 +129,7 @@ export default function App() {
               <div className="nl">Products</div>
               <div className={`ni ${currentView === 'products' ? 'on' : ''}`} onClick={() => { setCurrentView('products'); setSearchQuery(''); }}>Panel Boards <span className="nb b">{prods.length}</span></div>
               <div className={`ni ${currentView === 'orders' ? 'on' : ''}`} onClick={() => { setCurrentView('orders'); setSearchQuery(''); }}>Purchase Orders <span className="nb r">{pos.length}</span></div>
+              <div className={`ni ${currentView === 'suppliers' ? 'on' : ''}`} onClick={() => { setCurrentView('suppliers'); setSearchQuery(''); }}>Suppliers</div>
               <div className={`ni ${currentView === 'warehouse' ? 'on' : ''}`} onClick={() => { setCurrentView('warehouse'); setSearchQuery(''); }}>Warehouse</div>
               <div className={`ni ${currentView === 'manufacturing' ? 'on' : ''}`} onClick={() => { setCurrentView('manufacturing'); setSearchQuery(''); }}>Production Floor</div>
             </div>
@@ -238,11 +240,12 @@ export default function App() {
         {/* CURRENT VIEW COMPONENT */}
         {isAdmin || isFinance ? (
           <>
-            {currentView === 'main-dash' && <Dashboard />}
-            {currentView === 'fin-dash' && <FinanceDashboard />}
+            {currentView === 'main-dash' && <Dashboard searchQuery={searchQuery} />}
+            {currentView === 'fin-dash' && <FinanceDashboard searchQuery={searchQuery} />}
             {currentView === 'payroll' && <Payroll searchQuery={searchQuery} />}
             {currentView === 'products' && <Products prods={prods} setProds={setProds} searchQuery={searchQuery} />}
             {currentView === 'orders' && <Orders pos={pos} setPos={setPos} searchQuery={searchQuery} />}
+            {currentView === 'suppliers' && <Suppliers searchQuery={searchQuery} />}
             {currentView === 'warehouse' && <Warehouse searchQuery={searchQuery} />}
             {currentView === 'manufacturing' && <Manufacturing searchQuery={searchQuery} />}
             {currentView === 'services' && <Services searchQuery={searchQuery} />}
@@ -251,7 +254,7 @@ export default function App() {
             {currentView === 'employees' && <Employees searchQuery={searchQuery} />}
             {currentView === 'assign' && <Assign assigns={assigns} setAssigns={setAssigns} searchQuery={searchQuery} />}
             {currentView === 'projects' && <Projects projects={projects} setProjects={setProjects} searchQuery={searchQuery} />}
-            {currentView === 'alerts' && <Alerts assigns={assigns} projects={projects} />}
+            {currentView === 'alerts' && <Alerts assigns={assigns} projects={projects} searchQuery={searchQuery} />}
             {currentView === 'admin-worklogs' && <AdminWorkLogs searchQuery={searchQuery} />}
           </>
         ) : (
