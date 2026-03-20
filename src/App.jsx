@@ -256,13 +256,13 @@ export default function App() {
           </>
         ) : (
           <>
-            {currentView === 'main-dash' && <EmpDashboard currentUser={currentUser} assigns={assigns} />}
-            {currentView === 'emp-worklog' && <EmpWorkLog currentUser={currentUser} />}
-            {currentView === 'emp-services' && <EmpServices currentUser={currentUser} />}
+            {currentView === 'main-dash' && <EmpDashboard currentUser={currentUser} assigns={assigns} searchQuery={searchQuery} />}
+            {currentView === 'emp-worklog' && <EmpWorkLog currentUser={currentUser} searchQuery={searchQuery} />}
+            {currentView === 'emp-services' && <EmpServices currentUser={currentUser} searchQuery={searchQuery} />}
             {currentView === 'emp-profile' && <EmpProfile currentUser={currentUser} assigns={assigns} />}
             {currentView === 'emp-scanner' && <EmpScanner currentUser={currentUser} />}
-            {currentView === 'emp-products' && <EmpProducts prods={prods} />}
-            {currentView === 'emp-orders' && <EmpOrders pos={pos} />}
+            {currentView === 'emp-products' && <EmpProducts prods={prods} searchQuery={searchQuery} />}
+            {currentView === 'emp-orders' && <EmpOrders pos={pos} searchQuery={searchQuery} />}
           </>
         )}
       </div>

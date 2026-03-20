@@ -3,7 +3,7 @@ import { INITIAL_WORK_LOGS, ALL_SERVICES, today, todayStr, dF, fmt } from './dat
 import CheckIn from './CheckIn';
 import CameraScanner from './CameraScanner';
 
-export default function EmpDashboard({ currentUser, assigns }) {
+export default function EmpDashboard({ currentUser, assigns, searchQuery = '' }) {
   const [chartView, setChartView] = useState('hours');
   const [checkInModal, setCheckInModal] = useState(false);
   const [cameraModal, setCameraModal] = useState(false);
@@ -12,9 +12,16 @@ export default function EmpDashboard({ currentUser, assigns }) {
   const [selectedProj, setSelectedProj] = useState('');
 
   const usr = currentUser.username;
-  const logs = INITIAL_WORK_LOGS[usr] || [];
-  const myServices = ALL_SERVICES.filter(s => s.emp === usr);
-  const myAssigns = assigns.filter(a => a.emp === usr);
+  let logs = INITIAL_WORK_LOGS[usr] || [];
+  let myServices = ALL_SERVICES.filter(s => s.emp === usr);
+  let myAssigns = assigns.filter(a => a.emp === usr);
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    logs = logs.filter(l => l.site.toLowerCase().includes(q) || l.task.toLowerCase().includes(q));
+    myServices = myServices.filter(s => s.type.toLowerCase().includes(q) || s.client.toLowerCase().includes(q));
+    myAssigns = myAssigns.filter(a => a.proj.toLowerCase().includes(q) || a.role.toLowerCase().includes(q));
+  }
 
   const currentProj = selectedProj || (myAssigns.length > 0 ? myAssigns[0].proj : 'other');
   const selA = myAssigns.find(a => a.proj === currentProj);

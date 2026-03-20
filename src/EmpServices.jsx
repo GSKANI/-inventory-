@@ -1,9 +1,13 @@
 import React from 'react';
 import { ALL_SERVICES, fmt } from './data';
 
-export default function EmpServices({ currentUser }) {
+export default function EmpServices({ currentUser, searchQuery = '' }) {
   const usr = currentUser.username;
-  const myServices = ALL_SERVICES.filter(s => s.emp === usr);
+  let myServices = ALL_SERVICES.filter(s => s.emp === usr);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    myServices = myServices.filter(s => s.type.toLowerCase().includes(q) || s.client.toLowerCase().includes(q) || s.id.toLowerCase().includes(q));
+  }
   const inProg = myServices.filter(s => s.status === 'In Progress').length;
   const done = myServices.filter(s => s.status === 'Completed').length;
 

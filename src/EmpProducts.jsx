@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 
-export default function EmpProducts({ prods }) {
+export default function EmpProducts({ prods, searchQuery = '' }) {
   const [filter, setFilter] = useState('all');
 
-  const filtered = filter === 'all' ? prods : prods.filter(p => p.cat === filter);
+  let filtered = filter === 'all' ? prods : prods.filter(p => p.cat === filter);
+  if (searchQuery) {
+    filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.code.toLowerCase().includes(searchQuery.toLowerCase()));
+  }
 
   return (
     <div className="view pg on" style={{ animation: 'fin .2s ease' }}>

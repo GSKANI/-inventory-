@@ -1,8 +1,14 @@
 import React from 'react';
 import { fmt } from './data';
 
-export default function EmpOrders({ pos }) {
+export default function EmpOrders({ pos, searchQuery = '' }) {
   const SS = { Pending: 'ba', Received: 'bg', Cancelled: 'br' };
+
+  let filtered = pos;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(p => p.comp.toLowerCase().includes(q) || p.id.toLowerCase().includes(q) || p.supplier.toLowerCase().includes(q));
+  }
 
   return (
     <div className="view pg on" style={{ animation: 'fin .2s ease' }}>
@@ -29,7 +35,7 @@ export default function EmpOrders({ pos }) {
             </tr>
           </thead>
           <tbody>
-            {pos.map(po => (
+            {filtered.map(po => (
               <tr key={po.id}>
                 <td><span className="chip mo">{po.id}</span></td>
                 <td><strong>{po.comp}</strong></td>

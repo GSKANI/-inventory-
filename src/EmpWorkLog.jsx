@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { INITIAL_WORK_LOGS } from './data';
 
-export default function EmpWorkLog({ currentUser }) {
+export default function EmpWorkLog({ currentUser, searchQuery = '' }) {
   const [filter, setFilter] = useState('all');
   const usr = currentUser.username;
   const logs = INITIAL_WORK_LOGS[usr] || [];
   
-  const filtered = filter === 'all' ? logs : logs.filter(l => l.cat === filter);
+  let filtered = filter === 'all' ? logs : logs.filter(l => l.cat === filter);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(l => l.site.toLowerCase().includes(q) || l.task.toLowerCase().includes(q));
+  }
   const SS = { Completed: 'bg', 'In Progress': 'bb', 'On Hold': 'ba', 'Pending Material': 'ba' };
 
   return (
